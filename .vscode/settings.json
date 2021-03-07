@@ -1,0 +1,14 @@
+{
+  "python.pythonPath": ".venv/bin/python",
+  "python.venvPath": ".venv/",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.linting.pylintUseMinimalCheckers": false,
+  "python.linting.pylintArgs": [
+    "--disable=R,C",
+    "--disable=logging-format-interpolation",
+    "--disable=logging-fstring-interpolation"
+  ],
+  "python.formatting.provider": "black"
+}
