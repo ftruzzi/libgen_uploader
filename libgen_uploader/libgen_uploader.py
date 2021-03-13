@@ -107,7 +107,7 @@ class LibgenUploader:
                 return new_form
 
             elif result == Success(True):
-                logging.warning(
+                logging.debug(
                     f"No results found for metadata query {query} ({i + 1}/{len(metadata_queries)})"
                 )
                 if i == len(metadata_queries) - 1:
@@ -161,6 +161,7 @@ class LibgenUploader:
 
     def _handle_save_failure(self, f: Failure) -> Result[str, Exception]:
         exception = f.failure()
+
         if isinstance(exception, LibgenUploadException) and "unknown" not in (
             exc_str := str(exception).lower()
         ):
@@ -168,6 +169,9 @@ class LibgenUploader:
                 # bad ASIN, remove and resubmit
                 form = self._browser.get_form()
                 form["asin"].value = ""
+                logging.info(
+                    "Fetched metadata contained a bad ASIN. Trying to remove and resubmit..."
+                )
                 return self._submit_and_check_form(form)
 
         # failed to recover, re-raise
@@ -178,13 +182,11 @@ class LibgenUploader:
             kwargs["file_path"],
             self._upload_file,
             bind(check_upload_form_response),
-            map_(lambda *_: self._browser.get_form()),
-            bind(
-                partial(
-                    self._fill_metadata,
-                    metadata_queries=kwargs["metadata_queries"],
-                    metadata_source=kwargs["metadata_source"],
-                )
+            lambda *_: self._browser.get_form(),
+            partial(
+                self._fill_metadata,
+                metadata_queries=kwargs["metadata_queries"],
+                metadata_source=kwargs["metadata_source"],
             ),
             self._submit_and_check_form,
             alt(self._handle_save_failure),
