@@ -23,16 +23,12 @@ from .constants import (
     UPLOAD_PASSWORD,
 )
 from .helpers import (
+    LibgenMetadataException,
     LibgenUploadException,
     are_forms_equal,
     check_upload_form_response,
     check_metadata_form_response,
 )
-
-
-class LibgenMetadataException(LibgenUploadException):
-    pass
-
 
 class LibgenUploader:
     def __init__(self):
@@ -87,7 +83,12 @@ class LibgenUploader:
 
     @safe
     def _fetch_metadata(
-        self, form, *, metadata_source: str, metadata_queries: Union[str, List[str]]
+        self,
+        form,
+        *,
+        metadata_source: str,
+        metadata_queries: Union[str, List[str]],
+        ignore_empty: bool = False,
     ) -> Form:
         if isinstance(metadata_queries, str):
             metadata_queries = [metadata_queries]
@@ -111,6 +112,9 @@ class LibgenUploader:
                     f"No results found for metadata query {query} ({i + 1}/{len(metadata_queries)})"
                 )
                 if i == len(metadata_queries) - 1:
+                    if ignore_empty:
+                        return form
+
                     raise LibgenMetadataException(
                         "Failed to fetch metadata: no results"
                     )
@@ -167,11 +171,12 @@ class LibgenUploader:
         ):
             if "asin" in exc_str:
                 # bad ASIN, remove and resubmit
-                form = self._browser.get_form()
-                form["asin"].value = ""
-                logging.info(
+                logging.warning(
                     "Fetched metadata contained a bad ASIN. Trying to remove and resubmit..."
                 )
+
+                form = self._browser.get_form()
+                form["asin"].value = ""
                 return self._submit_and_check_form(form)
 
         # failed to recover, re-raise
