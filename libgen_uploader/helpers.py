@@ -12,6 +12,10 @@ class LibgenUploadException(Exception):
     pass
 
 
+class LibgenMetadataException(Exception):
+    pass
+
+
 def calculate_md5(file_path: str):
     import hashlib
 
