@@ -81,10 +81,9 @@ def validate_metadata(metadata) -> Union[bool, dict]:
     v = Validator(METADATA_FORM_SCHEMA)
     return True if v.validate(metadata) else v.errors
 
-def match_language_to_form_option(language: str, options: List[str]) -> str:
-    from .constants import METADATA_FORM_ALLOWED_LANGUAGES
 
-    for valid_language in METADATA_FORM_ALLOWED_LANGUAGES:
+def match_language_to_form_option(language: str, options: List[str]) -> str:
+    for valid_language in options:
         if language.lower() == valid_language.lower().strip():
             return valid_language
 
