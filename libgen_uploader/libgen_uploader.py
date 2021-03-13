@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import List, Union
+from io import BytesIO
+from typing import ByteString, List, Union
 
 from bs4 import BeautifulSoup
 from cerberus import schema
@@ -96,13 +97,27 @@ class LibgenUploader:
             form, self._submit_form_get_response, bind(check_metadata_form_response)
         )
 
+    @staticmethod
     @safe
-    def _upload_file(self, file_path: str) -> BeautifulSoup:
-        form = self._browser.get_form()
-        if not os.path.isfile(file_path):
-            raise FileNotFoundError(f"Upload failed: {file_path} is not a file.")
+    def _validate_file(file: Union[str, bytes]):
+        if isinstance(file, str):
+            if not os.path.isfile(file):
+                raise FileNotFoundError(f"Upload failed: {file} is not a file.")
 
-        form["file"].value = open(file_path, mode="rb")
+        elif isinstance(file, bytes):
+            # TODO add file validation?
+            pass
+
+        return file
+
+    @safe
+    def _upload_file(self, file: Union[str, bytes]) -> BeautifulSoup:
+        form = self._browser.get_form()
+        if isinstance(file, str):
+            form["file"].value = open(file, mode="rb")
+        elif isinstance(file, bytes):
+            form["file"].value = BytesIO(file)
+
         response = self._submit_form_get_response(form)
         if is_successful(response):
             return response.unwrap()
@@ -251,7 +266,8 @@ class LibgenUploader:
 
         upload_url: Result[str, Union[str, Exception]] = flow(
             kwargs["file_path"],
-            self._upload_file,
+            LibgenUploader._validate_file,
+            bind(self._upload_file),
             bind(check_upload_form_response),
             lambda *_: self._browser.get_form(),
             partial(
@@ -268,7 +284,7 @@ class LibgenUploader:
 
     def upload_fiction(
         self,
-        file_path: str,
+        file_path: Union[str, bytes],
         *,
         metadata: LibgenMetadata = None,
         metadata_source: str = None,
@@ -285,7 +301,7 @@ class LibgenUploader:
 
     def upload_scitech(
         self,
-        file_path: str,
+        file_path: Union[str, bytes],
         *,
         metadata: LibgenMetadata = None,
         metadata_source: str = None,
