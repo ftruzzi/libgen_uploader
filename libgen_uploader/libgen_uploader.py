@@ -5,6 +5,7 @@ import os
 from typing import List, Union
 
 from bs4 import BeautifulSoup
+from cerberus import schema
 
 from returns.curry import partial
 from returns.result import Failure, Result, Success, safe
@@ -28,13 +29,45 @@ from .helpers import (
     are_forms_equal,
     check_upload_form_response,
     check_metadata_form_response,
+    match_language_to_form_option,
+    validate_metadata,
 )
 
-class LibgenMetadata:
-    def __init__(self, *, title: str, language: str):
-        pass
 
-    # def _validate_metadata(self, **kwargs):
+class LibgenMetadata:
+    def __init__(
+        self,
+        *,
+        title: str,
+        language: str,
+        authors: List[str] = None,
+        edition: str = None,
+        series: str = None,
+        pages: int = None,
+        year: int = None,
+        publisher: str = None,
+        ISBNs: List[str] = None,
+        description: str = None,
+        comment: str = None,
+    ):
+        language = language.lower()
+        result = validate_metadata(
+            {k: v for k, v in locals().items() if k != "self" and v is not None}
+        )
+        if result == True:
+            self.title = title
+            self.language = language
+            self.authors = authors
+            self.edition = edition
+            self.series = series
+            self.pages = pages
+            self.year = year
+            self.publisher = publisher
+            self.ISBNs = ISBNs
+            self.description = description
+            self.comment = comment
+        else:
+            logging.error(f"Metadata validation failed: {result}")
 
 
 class LibgenUploader:
@@ -135,12 +168,10 @@ class LibgenUploader:
         self,
         form: Form,
         *,
+        metadata: LibgenMetadata = None,
         metadata_source: str = None,
         metadata_queries: Union[str, List[str]] = "",
-        title: str = None,
-        language: str = None,
     ) -> Form:
-        # TODO add auto metadata filling from kwargs
         if metadata_source:
             metadata_source = metadata_source.strip().lower()
             form = self._fetch_metadata(
@@ -151,28 +182,51 @@ class LibgenUploader:
             else:
                 raise form.failure()
 
+        # replace existing/retrieved metadata with user-provided ones
+        if isinstance(metadata, LibgenMetadata):
+            metadata_dict = {
+                k: v for k, v in metadata.__dict__.items() if v is not None
+            }
+            keys_to_copy = (
+                "title",
+                "edition",
+                "series",
+                "pages",
+                "year",
+                "publisher",
+                "description",
+            )
+            for k in keys_to_copy:
+                if k in metadata_dict:
+                    form[k].value = metadata_dict[k]
+
+            if "language" in metadata_dict:
+                # need to exactly match language to <select> options
+                language_str = match_language_to_form_option(
+                    metadata_dict["language"],
+                    [o for o in form["language_options"].options if o != ""],
+                )
+                form["language"].value = language_str
+                form["language_options"].value = language_str
+            if "authors" in metadata_dict:
+                form["authors"].value = ", ".join(a for a in metadata_dict["authors"])
+            if "ISBNs" in metadata_dict:
+                form["isbn"].value = ",".join(i for i in metadata_dict["ISBNs"])
+            if "comment" in metadata_dict:
+                form["file_commentary"].value = metadata_dict["comment"]
+
         # language and title are mandatory values
         if not form["language"]:
-            if language:
-                form["language"].value = language
-            else:
-                raise LibgenMetadataException(
-                    "Missing required metadata value: language"
-                )
+            raise LibgenMetadataException("Missing required metadata value: language")
 
         if not form["title"]:
-            if title:
-                form["title"].value = title
-            else:
-                raise LibgenMetadataException("Missing required metadata value: title")
+            raise LibgenMetadataException("Missing required metadata value: title")
 
         # delete "fetch metadata" submit
         del form.fields["fetch_metadata"]
         return form
 
-    def _handle_save_failure(self, f: Failure) -> Result[str, Exception]:
-        exception = f.failure()
-
+    def _handle_save_failure(self, exception: Exception) -> Result[str, Exception]:
         if isinstance(exception, LibgenUploadException) and "unknown" not in (
             exc_str := str(exception).lower()
         ):
@@ -190,6 +244,11 @@ class LibgenUploader:
         return Failure(exception)
 
     def _upload(self, **kwargs) -> Result[str, Union[str, Exception]]:
+        if [kwargs["metadata_queries"], kwargs["metadata_source"]].count(None) == 1:
+            raise LibgenUploadException(
+                "Both metadata_source and metadata_queries are required to fetch metadata."
+            )
+
         upload_url: Result[str, Union[str, Exception]] = flow(
             kwargs["file_path"],
             self._upload_file,
@@ -197,11 +256,12 @@ class LibgenUploader:
             lambda *_: self._browser.get_form(),
             partial(
                 self._fill_metadata,
+                metadata=kwargs["metadata"],
                 metadata_queries=kwargs["metadata_queries"],
                 metadata_source=kwargs["metadata_source"],
             ),
-            # self._submit_and_check_form,
-            # alt(self._handle_save_failure),
+            self._submit_and_check_form,
+            lash(self._handle_save_failure),
         )
 
         return upload_url
@@ -210,6 +270,7 @@ class LibgenUploader:
         self,
         file_path: str,
         *,
+        metadata: LibgenMetadata = None,
         metadata_source: str = None,
         metadata_queries: Union[str, List] = "",
     ) -> Result[str, Union[str, Exception]]:
@@ -217,6 +278,7 @@ class LibgenUploader:
         self._browser.open(FICTION_UPLOAD_URL)
         return self._upload(
             file_path=file_path,
+            metadata=metadata,
             metadata_source=metadata_source,
             metadata_queries=metadata_queries,
         )
@@ -225,6 +287,7 @@ class LibgenUploader:
         self,
         file_path: str,
         *,
+        metadata: LibgenMetadata = None,
         metadata_source: str = None,
         metadata_queries: Union[str, List] = "",
     ) -> Result[str, Union[str, Exception]]:
@@ -232,6 +295,7 @@ class LibgenUploader:
         self._browser.open(SCITECH_UPLOAD_URL)
         return self._upload(
             file_path=file_path,
+            metadata=metadata,
             metadata_source=metadata_source,
             metadata_queries=metadata_queries,
         )

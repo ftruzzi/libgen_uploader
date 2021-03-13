@@ -1,1 +1,1 @@
-from .libgen_uploader import LibgenUploader
+from .libgen_uploader import LibgenMetadata, LibgenUploader

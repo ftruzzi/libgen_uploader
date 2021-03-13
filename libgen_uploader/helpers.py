@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union
+from typing import List, Union
 
 from bs4 import BeautifulSoup
 from returns.result import safe
@@ -72,3 +72,20 @@ def are_forms_equal(first: Form, second: Form) -> bool:
             return False
 
     return True
+
+
+def validate_metadata(metadata) -> Union[bool, dict]:
+    from cerberus import Validator
+    from .constants import METADATA_FORM_SCHEMA
+
+    v = Validator(METADATA_FORM_SCHEMA)
+    return True if v.validate(metadata) else v.errors
+
+def match_language_to_form_option(language: str, options: List[str]) -> str:
+    from .constants import METADATA_FORM_ALLOWED_LANGUAGES
+
+    for valid_language in METADATA_FORM_ALLOWED_LANGUAGES:
+        if language.lower() == valid_language.lower().strip():
+            return valid_language
+
+    raise LibgenMetadataException(f"Failed to select correct language in upload form: {language} not found.")
