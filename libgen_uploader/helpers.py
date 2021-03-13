@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import logging
-
 from typing import Union
 
 from bs4 import BeautifulSoup
-from returns.result import Result, Failure, Success, safe
-import robobrowser
+from returns.result import safe
 from robobrowser.browser import RoboBrowser
+from robobrowser.forms.form import Form
 
 
 class LibgenUploadException(Exception):
@@ -36,7 +34,7 @@ def check_upload_form_response(response: BeautifulSoup) -> bool:
     if "fetch bibliographic" in str(response).lower():
         return True
 
-    raise LibgenUploadException("File upload failure: unknown error")
+    raise LibgenUploadException("Upload failed: unknown error")
 
 
 @safe
@@ -44,7 +42,7 @@ def check_metadata_form_response(
     response: BeautifulSoup,
 ) -> str:
 
-    if error_el := response.select_one(".error"):
+    if error_el := response.select_one(".error") or response.select_one(".form_error"):
         error_text = error_el.text.strip()
         raise LibgenUploadException(f"File save failed: {error_text}")
 
@@ -55,13 +53,11 @@ def check_metadata_form_response(
             .attrs["href"]
         )
 
-    raise LibgenUploadException("File save error: unknown failure")
+    raise LibgenUploadException("File save failed: unknown failure")
 
 
 @safe
-def are_forms_equal(
-    first: robobrowser.forms.form.Form, second: robobrowser.forms.form.Form
-) -> bool:
+def are_forms_equal(first: Form, second: Form) -> bool:
     first_keys = set(first.keys())
     second_keys = set(second.keys())
     if first_keys != second_keys:

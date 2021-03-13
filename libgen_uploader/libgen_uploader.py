@@ -102,7 +102,7 @@ class LibgenUploader:
                 return new_form
 
             elif result == Success(True):
-                logging.debug(
+                logging.warning(
                     f"No results found for metadata query {query} ({i + 1}/{len(metadata_queries)})"
                 )
                 if i == len(metadata_queries) - 1:
