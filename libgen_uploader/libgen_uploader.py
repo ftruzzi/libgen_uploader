@@ -7,8 +7,8 @@ from typing import List, Union
 from bs4 import BeautifulSoup
 
 from returns.curry import partial
-from returns.result import Result, Success, safe
-from returns.pointfree import bind
+from returns.result import Failure, Result, Success, safe
+from returns.pointfree import alt, bind, lash, map_
 from returns.pipeline import flow, is_successful
 
 from robobrowser import RoboBrowser
@@ -54,6 +54,11 @@ class LibgenUploader:
         self._browser.submit_form(form, submit=submit)
         self._browser.response.raise_for_status()
         return self._browser.parsed
+
+    def _submit_and_check_form(self, form: Form) -> Result[str, Exception]:
+        return flow(
+            form, self._submit_form_get_response, bind(check_metadata_form_response)
+        )
 
     @safe
     def _upload_file(self, file_path: str) -> BeautifulSoup:
@@ -154,17 +159,26 @@ class LibgenUploader:
         del form.fields["fetch_metadata"]
         return form
 
-    @safe
-    # need this decorated for some reason, lambda function doesn't work
-    def _get_form_ignore_args(self, *args) -> Form:
-        return self._browser.get_form()
+    def _handle_save_failure(self, f: Failure) -> Result[str, Exception]:
+        exception = f.failure()
+        if isinstance(exception, LibgenUploadException) and "unknown" not in (
+            exc_str := str(exception).lower()
+        ):
+            if "asin" in exc_str:
+                # bad ASIN, remove and resubmit
+                form = self._browser.get_form()
+                form["asin"].value = ""
+                return self._submit_and_check_form(form)
+
+        # failed to recover, re-raise
+        return Failure(exception)
 
     def _upload(self, **kwargs) -> Result[str, Union[str, Exception]]:
         upload_url: Result[str, Union[str, Exception]] = flow(
             kwargs["file_path"],
             self._upload_file,
             bind(check_upload_form_response),
-            bind(self._get_form_ignore_args),
+            map_(lambda *_: self._browser.get_form()),
             bind(
                 partial(
                     self._fill_metadata,
@@ -172,8 +186,8 @@ class LibgenUploader:
                     metadata_source=kwargs["metadata_source"],
                 )
             ),
-            bind(self._submit_form_get_response),
-            bind(check_metadata_form_response),
+            self._submit_and_check_form,
+            alt(self._handle_save_failure),
         )
 
         return upload_url
