@@ -30,6 +30,13 @@ from .helpers import (
     check_metadata_form_response,
 )
 
+class LibgenMetadata:
+    def __init__(self, *, title: str, language: str):
+        pass
+
+    # def _validate_metadata(self, **kwargs):
+
+
 class LibgenUploader:
     def __init__(self):
         self._init_browser()
@@ -193,8 +200,8 @@ class LibgenUploader:
                 metadata_queries=kwargs["metadata_queries"],
                 metadata_source=kwargs["metadata_source"],
             ),
-            self._submit_and_check_form,
-            alt(self._handle_save_failure),
+            # self._submit_and_check_form,
+            # alt(self._handle_save_failure),
         )
 
         return upload_url
