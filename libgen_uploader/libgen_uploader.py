@@ -279,11 +279,13 @@ class LibgenUploader:
             self._validate_file,
             bind(self._upload_file),
             bind(check_upload_form_response),
-            lambda *_: self._browser.get_form(),
-            partial(
-                self._fetch_metadata,
-                metadata_query=kwargs["metadata_query"],
-                metadata_source=kwargs["metadata_source"],
+            map_(lambda *_: self._browser.get_form()),
+            bind(
+                partial(
+                    self._fetch_metadata,
+                    metadata_query=kwargs["metadata_query"],
+                    metadata_source=kwargs["metadata_source"],
+                )
             ),
             bind(
                 partial(
@@ -304,7 +306,8 @@ class LibgenUploader:
         *,
         metadata: LibgenMetadata = None,
         metadata_source: str = None,
-        metadata_query: Union[str, List] = "",
+        metadata_query: Union[str, List] = None,
+        ignore_empty_metadata_fetch: bool = False
     ) -> Result[str, Union[str, Exception]]:
         self._init_browser()
         self._browser.open(FICTION_UPLOAD_URL)
@@ -321,7 +324,7 @@ class LibgenUploader:
         *,
         metadata: LibgenMetadata = None,
         metadata_source: str = None,
-        metadata_query: Union[str, List] = "",
+        metadata_query: Union[str, List] = None,
     ) -> Result[str, Union[str, Exception]]:
         self._init_browser()
         self._browser.open(SCITECH_UPLOAD_URL)

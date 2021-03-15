@@ -7,7 +7,6 @@ from returns.result import safe
 from robobrowser.browser import RoboBrowser
 from robobrowser.forms.form import Form
 
-
 class LibgenUploadException(Exception):
     pass
 
