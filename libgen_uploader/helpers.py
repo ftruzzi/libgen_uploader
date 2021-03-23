@@ -19,11 +19,11 @@ def calculate_md5(file_path: str):
     import hashlib
 
     with open(file_path, "rb") as f:
-        hash = hashlib.md5()
+        f_hash = hashlib.md5()
         while chunk := f.read(8192):
-            hash.update(chunk)
+            f_hash.update(chunk)
 
-    return hash.hexdigest()
+    return f_hash.hexdigest()
 
 
 @safe

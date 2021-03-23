@@ -265,7 +265,7 @@ class LibgenUploader:
         # failed to recover, re-raise
         return Failure(exception)
 
-    def _upload(self, **kwargs) -> Result[str, Union[str, Exception]]:
+    def _upload(self, **kwargs) -> Result[str, Exception]:
         if [kwargs["metadata_query"], kwargs["metadata_source"]].count(None) == 1:
             if kwargs["metadata_source"] is None and self.metadata_source is not None:
                 kwargs["metadata_source"] = self.metadata_source
@@ -274,7 +274,7 @@ class LibgenUploader:
                     "Both metadata_source and metadata_query are required to fetch metadata."
                 )
 
-        upload_url: Result[str, Union[str, Exception]] = flow(
+        upload_url: Result[str, Exception] = flow(
             kwargs["file_path"],
             self._validate_file,
             bind(self._upload_file),
@@ -308,7 +308,7 @@ class LibgenUploader:
         metadata_source: str = None,
         metadata_query: Union[str, List] = None,
         ignore_empty_metadata_fetch: bool = False
-    ) -> Result[str, Union[str, Exception]]:
+    ) -> Result[str, Exception]:
         self._init_browser()
         self._browser.open(FICTION_UPLOAD_URL)
         return self._upload(
@@ -325,7 +325,7 @@ class LibgenUploader:
         metadata: LibgenMetadata = None,
         metadata_source: str = None,
         metadata_query: Union[str, List] = None,
-    ) -> Result[str, Union[str, Exception]]:
+    ) -> Result[str, Exception]:
         self._init_browser()
         self._browser.open(SCITECH_UPLOAD_URL)
         return self._upload(
