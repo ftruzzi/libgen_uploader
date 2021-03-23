@@ -1,5 +1,3 @@
-from libgen_uploader.helpers import LibgenMetadataException
-from _pytest.recwarn import recwarn
 import libgen_uploader
 from libgen_uploader.libgen_uploader import LibgenMetadata, LibgenUploader
 

@@ -13,6 +13,10 @@ from returns.result import Failure, Result, Success, safe
 from returns.pointfree import alt, bind, lash, map_
 from returns.pipeline import flow, is_successful
 
+# https://github.com/jmcarp/robobrowser/issues/93
+import werkzeug
+werkzeug.cached_property = werkzeug.utils.cached_property
+
 from robobrowser import RoboBrowser
 from robobrowser.forms.form import Form
 from robobrowser.forms.fields import Submit
