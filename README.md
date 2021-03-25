@@ -1,6 +1,6 @@
-A Library Genesis ebook uploader
+_A Library Genesis ebook uploader._
 
-**Warning: this library is to be considered unstable/beta until v1.0.0. API may change until then.**
+**This library is to be considered unstable/beta until v1.0.0. API may change until then.**
 
 ## Installation
 ```
@@ -34,6 +34,10 @@ Metadata support is not complete yet. The default metadata are the one contained
 Any fetched metadata completely replaces all metadata contained in the ebook itself (this is how the upload form works), and any custom (user-provided) metadata overrides the default/fetched ones.
 
 ```python
+# use metadata contained in the book
+u = LibgenUploader()
+u.upload_scitech("book.epub")
+
 # session-wide metadata source
 u = LibgenUploader(metadata_source="amazon_it")
 u.upload_scitech("book.epub", metadata_query="9788812312312")
