@@ -257,10 +257,17 @@ version = "0.15.0"
 description = "Make your functions return something meaningful, typed, and safe!"
 category = "main"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = "^3.7"
+develop = false
 
 [package.dependencies]
-typing-extensions = ">=3.7,<4.0"
+typing-extensions = "^3.7"
+
+[package.source]
+type = "git"
+url = "https://github.com/dry-python/returns.git"
+reference = "ae928f50"
+resolved_reference = "ae928f503aceb26a785b4d61499bc469c59abd93"
 
 [[package]]
 name = "robobrowser"
@@ -378,7 +385,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3a1009c52af7732c8896084740c5cdd2c1693ed642c84fbd3728cc31326d2a1c"
+content-hash = "2dd28b03e92a1645c02f934d27bc2fecf2746b4b0b58f4f8ebaf8b2fd7a71744"
 
 [metadata.files]
 appdirs = [
@@ -577,10 +584,7 @@ requests = [
     {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
     {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
 ]
-returns = [
-    {file = "returns-0.15.0-py3-none-any.whl", hash = "sha256:5c96ca1c3ec12051ea159c1115470520d83ad0413c461b98f94b0f8f88b57ad6"},
-    {file = "returns-0.15.0.tar.gz", hash = "sha256:32f0595da0a1e2401520204eee64cae937fedaf95c516e892287e0c9275d3f6b"},
-]
+returns = []
 robobrowser = [
     {file = "robobrowser-0.5.3.tar.gz", hash = "sha256:31219acab41ca68adce928e5c1e04acebba4ceabeb447b9c5e408d7b30fee983"},
 ]
