@@ -2,7 +2,9 @@ __pycache__
 .env
 .hypotesis
 .mypy_cache
+.pytest_cache
 .venv/
 build/
 dist/
 tests/files/minimal/
+test.py
