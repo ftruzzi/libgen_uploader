@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Basic Z2VuZXNpczp1cGxvYWQ=
+      Connection:
+      - keep-alive
+      User-Agent:
+      - libgen_uploader-v0.1.0
+    method: GET
+    uri: https://library.bz/fiction/upload/
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA5VV23LbNhB9lr5iw07jF4qgLmkcmWTGlu3UjV17PHLduJMHiIREOCSAAKBk5eu7
+        AClfptNMwgfwgsVezjm7TF4dX87mn65O4Pf5xTlc3Rydn80gGBByO54Rcjw/bjcmUTwk5OTPAILS
+        WjUlZLPZRJtxJPWKzK9JaetqQozVPLdRYYsg6yfum7sxWmT9XlIzS8EdHrCvDV+nwUwKy4QdzLeK
+        BZC3b2lg2YP1/g4gL6k2zKaNXQ720WWvlyyoYVBqtkwDssRgXArSqErSgrQGFRdfQLMqDYzdVsyU
+        jNlgd8JYanmOeeJOlBvjjiQm11xZsJhGF/2ermn7NQCjcwzVHbz/2jC9HYyjcTSMai6ie3SRkNY2
+        6/cT0labLGSxxdoLvgYfLA0ULQouVtOReoCJejhY0PzLSstGFINcVlJPfzk9evcunhx0b7G/DpYI
+        y8Dwb2w6HMW/BtltSe2egZIqxQQrwEqwJQOOUOolzdl7SBBlj4/D2iBTS6mbOqrLxnq21pxtrFQ8
+        j1Sp3i/T/dc23R+/HQbZNTIFstFAhcDEclYjPQmhWQRXFUPgQwRWSW3RYAtMa6nNT4az6W+T0TjI
+        SqaZ95wQxKhDihdp4PBj2vNi6aJiO/g2vLDldBg7DJAzq70abAFaboyiIg1GyEQ5zM75QlO9hQ8I
+        j+EGGRkiQ9ZJEI+VWU25QLFVFfPimeJe2fnK/nmqhjg7lFROLa3kyuUKn+E/Bq30DBoKtqm20L6z
+        4vv2aN4aAoUlrzwS8LnLEm+uuMcSy6zT+Y9kvWuJ7yW+s/mJ3F8e+aH0iacPmX1GcNcKLZf7cYxt
+        UFO94mIaA22s9NQ+65nHzRiG0RtWQ/y8H960WuglKvskmz3NYCWxw1xLvEB31yMJq3dQJgSfn+EZ
+        JUQ5zFW2E3ohxZ599INyF1IMnojwkwucirujva7OXoLtVgMOu1KinJU0OH2YyNvpUjeV5Ypq65qy
+        HhQorgCoF2IauOpnpZQ44FpZPFUyxdy4UM1uSjnRBCBojRPLP2fwYt80i5pj4DWtGjS58QPylYfX
+        R25rfS0WRh08ln5YVXKDI8U5BJcftWYKV8enIRz/8ddNCCf4ewjh4vLoLITDu1u/jP06CeH0aBTC
+        9dwZX8788ncId2dX+PHwOoTZ0Z1b/NPbJ7gvuOB1UwN9HtuNO+AGhjF8XIRQ04f/txnFMVwsWocd
+        BSi5bvz630jW/xcTTHpW5QYAAA==
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Mon, 15 Mar 2021 09:49:39 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,3 +1,8 @@
-.venv/
-.env
 __pycache__
+.env
+.hypotesis
+.mypy_cache
+.venv/
+build/
+dist/
+tests/files/minimal/
