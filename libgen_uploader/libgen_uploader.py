@@ -153,7 +153,7 @@ class LibgenUploader:
         metadata_query: Union[str, List[str]] = None,
         ignore_empty: bool = False,
     ) -> Form:
-        if not metadata_source:
+        if not metadata_source or not metadata_query:
             return form
 
         metadata_source = metadata_source.strip().lower()
@@ -283,7 +283,7 @@ class LibgenUploader:
             self._validate_file,
             bind(self._upload_file),
             bind(check_upload_form_response),
-            map_(lambda *_: self._browser.get_form()),
+            map_(lambda *_: self._browser.get_form()), # type: ignore
             bind(
                 partial(
                     self._fetch_metadata,
