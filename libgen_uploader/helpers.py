@@ -7,6 +7,7 @@ from returns.result import safe
 from robobrowser.browser import RoboBrowser
 from robobrowser.forms.form import Form
 
+
 class LibgenUploadException(Exception):
     pass
 
@@ -86,4 +87,6 @@ def match_language_to_form_option(language: str, options: List[str]) -> str:
         if language.lower() == valid_language.lower().strip():
             return valid_language
 
-    raise LibgenMetadataException(f"Failed to select correct language in upload form: {language} not found.")
+    raise LibgenMetadataException(
+        f"Failed to select correct language in upload form: {language} not found."
+    )
