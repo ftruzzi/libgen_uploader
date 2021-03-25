@@ -27,7 +27,7 @@ def test_validate_file_path(uploader: LibgenUploader):
     assert uploader._validate_file(file_path) == Success(file_path)
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_file_upload(uploader: LibgenUploader, returns: ReturnsAsserts):
     file_path = os.path.join(files_path, "minimal.epub")
     with returns.assert_trace(
@@ -36,7 +36,7 @@ def test_file_upload(uploader: LibgenUploader, returns: ReturnsAsserts):
         uploader.upload_fiction(file_path)
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_bytes_upload(uploader: LibgenUploader, returns: ReturnsAsserts):
     file_path = os.path.join(files_path, "minimal.epub")
     with open(file_path, "rb") as f:
@@ -48,7 +48,7 @@ def test_bytes_upload(uploader: LibgenUploader, returns: ReturnsAsserts):
         uploader.upload_fiction(file_path)
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_no_metadata_results(uploader: LibgenUploader, returns: ReturnsAsserts):
     file_path = os.path.join(files_path, "minimal.epub")
     with returns.assert_trace(Failure, uploader._fetch_metadata):
@@ -57,7 +57,7 @@ def test_no_metadata_results(uploader: LibgenUploader, returns: ReturnsAsserts):
         )
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_metadata_fetched(uploader: LibgenUploader):
     file_path = os.path.join(files_path, "minimal.epub")
     form = get_return_value(
@@ -72,7 +72,7 @@ def test_metadata_fetched(uploader: LibgenUploader):
     assert form["title"].value == "La Divina Commedia. Ediz. integrale"
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_custom_metadata(uploader: LibgenUploader):
     file_path = os.path.join(files_path, "minimal.epub")
     metadata = LibgenMetadata(title="custom title", authors=["author1", "author2"])
@@ -93,7 +93,7 @@ def test_custom_metadata(uploader: LibgenUploader):
     )
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_invalid_metadata_language(uploader: LibgenUploader, returns: ReturnsAsserts):
     file_path = os.path.join(files_path, "minimal.epub")
     metadata = LibgenMetadata(language="Invalid")
@@ -107,7 +107,7 @@ def test_invalid_metadata_language(uploader: LibgenUploader, returns: ReturnsAss
         )
 
 
-@pytest.mark.vcr(record_mode="once")
+@pytest.mark.vcr(record_mode="none")
 def test_custom_metadata_overrides_fetched(uploader: LibgenUploader):
     file_path = os.path.join(files_path, "minimal.epub")
     metadata = LibgenMetadata(title="custom title")
@@ -128,5 +128,5 @@ def test_custom_metadata_overrides_fetched(uploader: LibgenUploader):
     )
 
 
-# @pytest.mark.vcr(record_mode="once")
+# @pytest.mark.vcr(record_mode="none")
 # def upload_book(uploader):
