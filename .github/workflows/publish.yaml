@@ -1,0 +1,35 @@
+name: publish
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install poetry
+      run: |
+        curl -sSL \
+          "https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py" | python
+        # Adding `poetry` to `$PATH`:
+        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        poetry config virtualenvs.in-project true
+        poetry install
+
+    - name: Config PyPI token
+      run: poetry config pypi-token.pypi ${PYPI_API_TOKEN}
+      env:
+        PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+    - name: Build and publish
+      run: poetry publish --build
