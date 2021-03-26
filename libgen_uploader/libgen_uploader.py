@@ -8,6 +8,7 @@ from typing import ByteString, List, Union
 
 # https://github.com/jmcarp/robobrowser/issues/93
 import werkzeug
+
 werkzeug.cached_property = werkzeug.utils.cached_property
 
 from bs4 import BeautifulSoup
