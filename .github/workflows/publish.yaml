@@ -24,6 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         poetry config virtualenvs.in-project true
+        poetry config experimental.new-installer false
         poetry install
 
     - name: Config PyPI token
