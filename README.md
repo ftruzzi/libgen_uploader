@@ -56,10 +56,15 @@ u.upload_scitech("book.epub", metadata_query="9788812312312")
 
 # book-level metadata source
 u = LibgenUploader()
-u.upload_scitech("book.epub", metadata_source="amazon_it", metadata_query="9788812312312")
+u.upload_scitech(
+    "book.epub",
+    metadata_source="amazon_it",
+    metadata_query=["9788812312312", "another_isbn"] # you can pass an array of values in case the first ones don't return results
+)
 
 # custom, user-provided metadata (override default/fetched)
 from libgen_uploader import LibgenMetadata
+
 m = LibgenMetadata(title="new title", authors=["John Smith", "Jack Black"])
 u.upload_scitech("book.epub", metadata=m)
 ```
