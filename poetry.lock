@@ -269,21 +269,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 
 [[package]]
 name = "returns"
-version = "0.15.0"
+version = "0.16.0"
 description = "Make your functions return something meaningful, typed, and safe!"
 category = "main"
 optional = false
-python-versions = "^3.7"
-develop = false
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-typing-extensions = "^3.7"
-
-[package.source]
-type = "git"
-url = "https://github.com/dry-python/returns.git"
-reference = "ae928f50"
-resolved_reference = "ae928f503aceb26a785b4d61499bc469c59abd93"
+typing-extensions = ">=3.7,<4.0"
 
 [[package]]
 name = "robobrowser"
@@ -401,7 +394,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "0b6d9087de19faea6ce618dcdc9b43ea6aa0bcb6f4d28ed3bada02ee947f6927"
+content-hash = "f83f0de8a83cab017480d033df738f1dcc18ac04f11a7b1f3c8d3c057667f1eb"
 
 [metadata.files]
 appdirs = [
@@ -624,7 +617,10 @@ requests = [
     {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
     {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
 ]
-returns = []
+returns = [
+    {file = "returns-0.16.0-py3-none-any.whl", hash = "sha256:3b7544f7b8c5aac8da3469b6ce34ed8878c993f0443d47f133cef2d38b08bc2a"},
+    {file = "returns-0.16.0.tar.gz", hash = "sha256:ac717aaf1de89c87988c9c7cd57ce0bb06f726bd0f37c8915a53fa8ec8f800b7"},
+]
 robobrowser = [
     {file = "robobrowser-0.5.3.tar.gz", hash = "sha256:31219acab41ca68adce928e5c1e04acebba4ceabeb447b9c5e408d7b30fee983"},
 ]
