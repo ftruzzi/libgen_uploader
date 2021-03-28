@@ -8,7 +8,25 @@ _A Library Genesis ebook uploader._
 pip install libgen-uploader
 ```
 
-## Usage
+## Usage from command-line
+
+```bash
+python -m libgen_uploader (--scitech|--fiction) [args] book.epub
+```
+
+Optional arguments:
+```
+--metadata-source {local,amazon_us,amazon_uk,amazon_de,amazon_fr,amazon_it,amazon_es,amazon_jp,bl,douban,goodreads,google_books,loc,rsl,worldcat}
+    Source to fetch book metadata from
+
+--metadata-query METADATA_QUERY
+    Metadata query for selected source (supports multiple, comma-separated)
+
+-d, --debug
+    Activate debug logging
+```
+
+## Usage as library
 
 This library uses [returns](https://github.com/dry-python/returns), and returns [Result containers](https://returns.readthedocs.io/en/latest/pages/result.html) which can either contain a success value or a failure/exception. Exception values are returned, not raised, so you can handle them as you wish and avoid wide `try/except` blocks or program crashes due to unforeseen exceptions.
 

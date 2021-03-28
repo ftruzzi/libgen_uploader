@@ -4,7 +4,8 @@ import logging
 import os
 
 from io import BytesIO
-from typing import ByteString, List, Union
+from ntpath import basename
+from typing import List, Union
 
 # https://github.com/jmcarp/robobrowser/issues/93
 import werkzeug
@@ -116,6 +117,7 @@ class LibgenUploader:
             # TODO add file data validation?
             pass
 
+        logging.info("Selected file {}".format(basename(file)))
         return file
 
     @safe
@@ -250,6 +252,13 @@ class LibgenUploader:
 
         # delete "fetch metadata" submit
         del form.fields["fetch_metadata"]
+
+        logging.debug(
+            "Final book metadata: {}".format(
+                ", ".join(f"{k}: {v}" for k, v in form.fields.items())
+            )
+        )
+
         return form
 
     def _handle_save_failure(self, exception: Exception) -> Result[str, Exception]:
@@ -311,7 +320,6 @@ class LibgenUploader:
         metadata: LibgenMetadata = None,
         metadata_source: str = None,
         metadata_query: Union[str, List] = None,
-        ignore_empty_metadata_fetch: bool = False,
     ) -> Result[str, Exception]:
         self._init_browser()
         self._browser.open(FICTION_UPLOAD_URL)
