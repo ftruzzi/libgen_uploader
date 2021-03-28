@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "libgen_uploader"
-version = "0.1.2"
+version = "0.2.0"
 description = "A Library Genesis ebook uploader"
 authors = ["Francesco Truzzi <francesco@truzzi.me>"]
 license = "MIT"
