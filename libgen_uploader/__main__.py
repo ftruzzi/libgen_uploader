@@ -33,8 +33,12 @@ if __name__ == "__main__":
         else "python -m {}".format(__spec__.name.partition(".")[0])  # type: ignore
     )
     upload_type = parser.add_mutually_exclusive_group(required=True)
-    upload_type.add_argument("--scitech", action="store_true", help="Upload to scitech (non-fiction) library")
-    upload_type.add_argument("--fiction", action="store_true", help="Upload to fiction library")
+    upload_type.add_argument(
+        "--scitech", action="store_true", help="Upload to scitech (non-fiction) library"
+    )
+    upload_type.add_argument(
+        "--fiction", action="store_true", help="Upload to fiction library"
+    )
     parser.add_argument(
         "--metadata-source",
         type=str,

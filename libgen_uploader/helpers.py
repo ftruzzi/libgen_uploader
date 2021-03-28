@@ -18,7 +18,6 @@ class LibgenMetadataException(Exception):
         self.message = message
 
 
-
 def calculate_md5(file_path: str):
     import hashlib
 
@@ -76,6 +75,7 @@ def are_forms_equal(first: Form, second: Form) -> bool:
 
     return True
 
+
 def epub_has_drm(book: Union[str, bytes]) -> bool:
     from io import BytesIO
     from zipfile import BadZipFile, ZipFile
@@ -83,11 +83,12 @@ def epub_has_drm(book: Union[str, bytes]) -> bool:
     book_file = BytesIO(book) if isinstance(book, bytes) else book
 
     try:
-        z = ZipFile(book_file) # type: ignore
+        z = ZipFile(book_file)  # type: ignore
         return any("encryption.xml" in f.filename for f in z.filelist)
     except BadZipFile:
         # assuming not .epub
         return False
+
 
 def validate_metadata(metadata) -> Union[bool, dict]:
     from cerberus import Validator
