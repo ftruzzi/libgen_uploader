@@ -108,17 +108,17 @@ class LibgenUploader:
 
     @staticmethod
     @safe
-    def _validate_file(file: Union[str, bytes]):
+    def _validate_file(file: Union[str, bytes]) -> Union[str, bytes]:
+        if isinstance(file, bytes):
+            # TODO add file data validation?
+            return file
+
         if isinstance(file, str):
             if not os.path.isfile(file):
                 raise FileNotFoundError(f"Upload failed: {file} is not a file.")
 
-        elif isinstance(file, bytes):
-            # TODO add file data validation?
-            pass
-
-        logging.info("Selected file {}".format(basename(file)))
-        return file
+            logging.info(f"Selected file {basename(file)}")
+            return file
 
     @safe
     def _upload_file(self, file: Union[str, bytes]) -> BeautifulSoup:
@@ -255,7 +255,7 @@ class LibgenUploader:
 
         logging.debug(
             "Final book metadata: {}".format(
-                ", ".join(f"{k}: {v}" for k, v in form.fields.items())
+                ", ".join(f"{k}: {v.value}" for k, v in form.fields.items() if v.value)
             )
         )
 
