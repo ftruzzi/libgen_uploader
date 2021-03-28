@@ -9,11 +9,14 @@ from robobrowser.forms.form import Form
 
 
 class LibgenUploadException(Exception):
-    pass
+    def __init__(self, message: str):
+        self.message = message
 
 
 class LibgenMetadataException(Exception):
-    pass
+    def __init__(self, message: str):
+        self.message = message
+
 
 
 def calculate_md5(file_path: str):

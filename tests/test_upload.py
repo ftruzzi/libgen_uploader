@@ -1,15 +1,16 @@
-import libgen_uploader
-from libgen_uploader.libgen_uploader import LibgenMetadata, LibgenUploader
+from libgen_uploader import LibgenMetadata, LibgenUploader
+from libgen_uploader.helpers import LibgenUploadException, check_upload_form_response
 
 from functools import partial
-from helpers import get_return_value
+from .helpers import get_return_value
 
 import os
 
 import pytest
 
-from returns.result import Success, Failure
 from returns.contrib.pytest import ReturnsAsserts
+from returns.pipeline import is_successful
+from returns.result import Success, Failure
 
 
 files_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "files")
@@ -27,12 +28,16 @@ def test_validate_file_path(uploader: LibgenUploader):
     assert uploader._validate_file(file_path) == Success(file_path)
 
 
+def test_epub_drm(uploader: LibgenUploader):
+    file_path = os.path.join(files_path, "minimal_drm.epub")
+    result = uploader.upload_fiction(file_path=file_path)
+    assert is_successful(result) is False and "drm" in str(result.failure()).lower()
+
+
 @pytest.mark.vcr(record_mode="none")
 def test_file_upload(uploader: LibgenUploader, returns: ReturnsAsserts):
     file_path = os.path.join(files_path, "minimal.epub")
-    with returns.assert_trace(
-        Success, libgen_uploader.helpers.check_upload_form_response
-    ):
+    with returns.assert_trace(Success, check_upload_form_response):
         uploader.upload_fiction(file_path)
 
 
@@ -42,10 +47,8 @@ def test_bytes_upload(uploader: LibgenUploader, returns: ReturnsAsserts):
     with open(file_path, "rb") as f:
         data = f.read()
 
-    with returns.assert_trace(
-        Success, libgen_uploader.helpers.check_upload_form_response
-    ):
-        uploader.upload_fiction(file_path)
+    with returns.assert_trace(Success, check_upload_form_response):
+        uploader.upload_fiction(data)
 
 
 @pytest.mark.vcr(record_mode="none")
@@ -126,7 +129,3 @@ def test_custom_metadata_overrides_fetched(uploader: LibgenUploader):
         "Dante Alighieri" in form["authors"].value
         and form["title"].value == "custom title"
     )
-
-
-# @pytest.mark.vcr(record_mode="none")
-# def upload_book(uploader):
