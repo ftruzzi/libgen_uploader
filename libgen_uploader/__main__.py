@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog=None
         if globals().get("__spec__") is None
-        else "python -m {}".format(__spec__.name.partition(".")[0])
+        else "python -m {}".format(__spec__.name.partition(".")[0])  # type: ignore
     )
     upload_type = parser.add_mutually_exclusive_group(required=True)
     upload_type.add_argument("--scitech", action="store_true")
