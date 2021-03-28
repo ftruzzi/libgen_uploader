@@ -9,11 +9,13 @@ from robobrowser.forms.form import Form
 
 
 class LibgenUploadException(Exception):
-    pass
+    def __init__(self, message: str):
+        self.message = message
 
 
 class LibgenMetadataException(Exception):
-    pass
+    def __init__(self, message: str):
+        self.message = message
 
 
 def calculate_md5(file_path: str):
@@ -72,6 +74,20 @@ def are_forms_equal(first: Form, second: Form) -> bool:
             return False
 
     return True
+
+
+def epub_has_drm(book: Union[str, bytes]) -> bool:
+    from io import BytesIO
+    from zipfile import BadZipFile, ZipFile
+
+    book_file = BytesIO(book) if isinstance(book, bytes) else book
+
+    try:
+        z = ZipFile(book_file)  # type: ignore
+        return any("encryption.xml" in f.filename for f in z.filelist)
+    except BadZipFile:
+        # assuming not .epub
+        return False
 
 
 def validate_metadata(metadata) -> Union[bool, dict]:
