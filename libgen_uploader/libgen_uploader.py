@@ -35,6 +35,7 @@ from .helpers import (
     are_forms_equal,
     check_upload_form_response,
     check_metadata_form_response,
+    epub_has_drm,
     match_language_to_form_option,
     validate_metadata,
 )
@@ -111,11 +112,17 @@ class LibgenUploader:
     def _validate_file(file: Union[str, bytes]) -> Union[str, bytes]:
         if isinstance(file, bytes):
             # TODO add file data validation?
+            if epub_has_drm(file):
+                raise LibgenUploadException("Your .epub file seems to have DRM.")
+
             return file
 
         if isinstance(file, str):
             if not os.path.isfile(file):
                 raise FileNotFoundError(f"Upload failed: {file} is not a file.")
+
+            if file.endswith(".epub") and epub_has_drm(file):
+                raise LibgenUploadException("Your .epub file seems to have DRM.")
 
             logging.info(f"Selected file {basename(file)}")
             return file
