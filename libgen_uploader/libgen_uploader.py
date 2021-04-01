@@ -8,6 +8,7 @@ from ntpath import basename
 from typing import List, Union
 
 import filetype
+
 # https://github.com/jmcarp/robobrowser/issues/93
 import werkzeug
 
@@ -137,10 +138,14 @@ class LibgenUploader:
     @safe
     def _upload_file(self, file: Union[str, bytes]) -> BeautifulSoup:
         if isinstance(file, str):
-            encoder = MultipartEncoder(fields={"file": (basename(file), open(file, "rb"))})
+            encoder = MultipartEncoder(
+                fields={"file": (basename(file), open(file, "rb"))}
+            )
         elif isinstance(file, bytes):
             file_ext = filetype.guess_extension(file)
-            encoder = MultipartEncoder(fields={"file": (f"book.{file_ext}", BytesIO(file))})
+            encoder = MultipartEncoder(
+                fields={"file": (f"book.{file_ext}", BytesIO(file))}
+            )
 
         with tqdm(
             desc=f"{str(file)}:",
