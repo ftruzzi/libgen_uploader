@@ -5,7 +5,7 @@ from returns.pipeline import is_successful
 
 
 def main(args):
-    u = LibgenUploader(metadata_source=args.metadata_source)
+    u = LibgenUploader(metadata_source=args.metadata_source, show_upload_progress=True)
 
     if args.scitech:
         result = u.upload_scitech(

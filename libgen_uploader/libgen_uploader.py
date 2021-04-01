@@ -7,6 +7,7 @@ from io import BytesIO
 from ntpath import basename
 from typing import List, Union
 
+import filetype
 # https://github.com/jmcarp/robobrowser/issues/93
 import werkzeug
 
@@ -14,6 +15,7 @@ werkzeug.cached_property = werkzeug.utils.cached_property
 
 from bs4 import BeautifulSoup
 from cerberus import schema
+from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 from returns.curry import partial
 from returns.result import Failure, Result, Success, safe
 from returns.pointfree import alt, bind, lash, map_
@@ -21,6 +23,7 @@ from returns.pipeline import flow, is_successful
 from robobrowser import RoboBrowser
 from robobrowser.forms.form import Form
 from robobrowser.forms.fields import Submit
+from tqdm import tqdm
 
 from .constants import (
     LIBGEN_UPLOADER_VERSION,
@@ -77,18 +80,22 @@ class LibgenMetadata:
 
 
 class LibgenUploader:
-    metadata_source = None
+    metadata_source: str = None
+    show_upload_progress: bool = False
 
-    def __init__(self, metadata_source: str = None):
+    def __init__(
+        self, *, metadata_source: str = None, show_upload_progress: bool = False
+    ):
         if metadata_source:
             self.metadata_source = metadata_source
+            self.show_upload_progress = show_upload_progress
 
         self._init_browser()
 
     def _init_browser(self):
         self._browser = RoboBrowser(
             parser="html.parser",
-            user_agent=f"libgen_uploader-v{LIBGEN_UPLOADER_VERSION}",
+            user_agent=f"libgen_uploader-v{LIBGEN_UPLOADER_VERSION} github.com/ftruzzi/libgen_uploader",
         )
         self._browser.session.auth = (UPLOAD_USERNAME, UPLOAD_PASSWORD)
 
@@ -129,17 +136,34 @@ class LibgenUploader:
 
     @safe
     def _upload_file(self, file: Union[str, bytes]) -> BeautifulSoup:
-        form = self._browser.get_form()
         if isinstance(file, str):
-            form["file"].value = open(file, mode="rb")
+            encoder = MultipartEncoder(fields={"file": (basename(file), open(file, "rb"))})
         elif isinstance(file, bytes):
-            form["file"].value = BytesIO(file)
+            file_ext = filetype.guess_extension(file)
+            encoder = MultipartEncoder(fields={"file": (f"book.{file_ext}", BytesIO(file))})
 
-        response = self._submit_form_get_response(form)
-        if is_successful(response):
-            return response.unwrap()
+        with tqdm(
+            desc=f"{str(file)}:",
+            total=encoder.len,
+            disable=self.show_upload_progress is False,
+            dynamic_ncols=True,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as bar:
+            monitor = MultipartEncoderMonitor(
+                encoder, lambda monitor: bar.update(monitor.bytes_read - bar.n)
+            )
+            session = self._browser.session
+            response = session.post(
+                "https://library.bz/fiction/upload/",
+                data=monitor,
+                headers={"Content-Type": monitor.content_type},
+            )
+            response.raise_for_status()
+            self._browser._update_state(response)
 
-        raise response.failure()
+        return BeautifulSoup(response.text, "html.parser")
 
     @safe
     def _fetch_metadata_from_query(
