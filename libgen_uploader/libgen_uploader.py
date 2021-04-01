@@ -81,7 +81,7 @@ class LibgenMetadata:
 
 
 class LibgenUploader:
-    metadata_source: str = None
+    metadata_source = None
     show_upload_progress: bool = False
 
     def __init__(
