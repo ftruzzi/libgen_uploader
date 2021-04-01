@@ -132,7 +132,6 @@ class LibgenUploader:
             if file.endswith(".epub") and epub_has_drm(file):
                 raise LibgenUploadException("Your .epub file seems to have DRM.")
 
-            logging.info(f"Selected file {basename(file)}")
             return file
 
     @safe
