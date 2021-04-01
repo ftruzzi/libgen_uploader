@@ -14,7 +14,7 @@ from .helpers import get_return_value
 
 files_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "files")
 
-@pytest.mark.vcr(record_mode="once")
+
 def test_validate_file_path_missing(uploader: LibgenUploader):
     file_path = os.path.join(files_path, "missing.epub")
     assert isinstance(
@@ -27,7 +27,6 @@ def test_validate_file_path(uploader: LibgenUploader):
     assert uploader._validate_file(file_path) == Success(file_path)
 
 
-@pytest.mark.vcr(record_mode="once")
 def test_epub_drm(uploader: LibgenUploader):
     file_path = os.path.join(files_path, "minimal_drm.epub")
     result = uploader.upload_fiction(file_path=file_path)

@@ -136,7 +136,16 @@ class LibgenUploader:
             return file
 
     @safe
-    def _upload_file(self, file: Union[str, bytes]) -> BeautifulSoup:
+    def _upload_file(self, file: Union[str, bytes], library: str) -> BeautifulSoup:
+        if library == "scitech":
+            self._init_browser()
+            self._browser.open(SCITECH_UPLOAD_URL)
+        elif library == "fiction":
+            self._init_browser()
+            self._browser.open(FICTION_UPLOAD_URL)
+        else:
+            raise ValueError(f"Unknown library to upload to: {library}")
+
         if isinstance(file, str):
             encoder = MultipartEncoder(
                 fields={"file": (basename(file), open(file, "rb"))}
@@ -148,7 +157,7 @@ class LibgenUploader:
             )
 
         with tqdm(
-            desc=f"{str(file)}:",
+            desc=f"{str(basename(file))}:",
             total=encoder.len,
             disable=self.show_upload_progress is False,
             dynamic_ncols=True,
@@ -314,7 +323,7 @@ class LibgenUploader:
         # failed to recover, re-raise
         return Failure(exception)
 
-    def _upload(self, **kwargs) -> Result[str, Exception]:
+    def _upload(self, library: str, **kwargs) -> Result[str, Exception]:
         if [kwargs["metadata_query"], kwargs["metadata_source"]].count(None) == 1:
             if kwargs["metadata_source"] is None and self.metadata_source is not None:
                 kwargs["metadata_source"] = self.metadata_source
@@ -326,7 +335,7 @@ class LibgenUploader:
         upload_url: Result[str, Exception] = flow(
             kwargs["file_path"],
             self._validate_file,
-            bind(self._upload_file),
+            bind(partial(self._upload_file, library=library)),
             bind(check_upload_form_response),
             map_(lambda *_: self._browser.get_form()),  # type: ignore
             bind(
@@ -357,10 +366,9 @@ class LibgenUploader:
         metadata_source: str = None,
         metadata_query: Union[str, List] = None,
     ) -> Result[str, Exception]:
-        self._init_browser()
-        self._browser.open(FICTION_UPLOAD_URL)
         return self._upload(
             file_path=file_path,
+            library="fiction",
             metadata=metadata,
             metadata_source=metadata_source,
             metadata_query=metadata_query,
@@ -374,10 +382,9 @@ class LibgenUploader:
         metadata_source: str = None,
         metadata_query: Union[str, List] = None,
     ) -> Result[str, Exception]:
-        self._init_browser()
-        self._browser.open(SCITECH_UPLOAD_URL)
         return self._upload(
             file_path=file_path,
+            library="scitech",
             metadata=metadata,
             metadata_source=metadata_source,
             metadata_query=metadata_query,
