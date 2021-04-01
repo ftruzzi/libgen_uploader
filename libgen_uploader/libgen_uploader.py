@@ -89,8 +89,8 @@ class LibgenUploader:
     ):
         if metadata_source:
             self.metadata_source = metadata_source
-            self.show_upload_progress = show_upload_progress
 
+        self.show_upload_progress = show_upload_progress
         self._init_browser()
 
     def _init_browser(self):
@@ -157,7 +157,7 @@ class LibgenUploader:
             )
 
         with tqdm(
-            desc=f"{str(basename(file))}:",
+            desc=basename(file) if isinstance(file, str) else str(file),
             total=encoder.len,
             disable=self.show_upload_progress is False,
             dynamic_ncols=True,
