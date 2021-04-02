@@ -20,7 +20,7 @@ def main(args):
     uploader = LibgenUploader(metadata_source="amazon_it", show_upload_progress=True)
 
     for i, row in enumerate(reader):
-        if row["is_fiction"]:
+        if int(row["is_fiction"]):
             result = uploader.upload_fiction(
                 row["filename"], metadata_query=row["isbn"]
             )
