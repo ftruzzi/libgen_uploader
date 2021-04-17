@@ -86,3 +86,13 @@ from libgen_uploader import LibgenMetadata
 m = LibgenMetadata(title="new title", authors=["John Smith", "Jack Black"])
 u.upload_scitech("book.epub", metadata=m)
 ```
+
+## Donations
+
+Just in case you want to say thanks :)
+
+**BTC**: 3Kdyv75GpzwZ1b19QECwr3znsjSSkoRAVq
+
+**ETH**: 0x1Af2121BaF1795Ce3685893d89E5eC66E1DC510
+
+**DOGE**: DLdbw36tgSqK52njimJKsitCtVg1D4n8t9
