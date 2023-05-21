@@ -96,7 +96,6 @@ class LibgenUploader:
     def _init_browser(self):
         self._browser = RoboBrowser(
             parser="html.parser",
-            user_agent=f"libgen_uploader-v{LIBGEN_UPLOADER_VERSION} github.com/ftruzzi/libgen_uploader",
         )
         self._browser.session.auth = (UPLOAD_USERNAME, UPLOAD_PASSWORD)
 
@@ -138,12 +137,14 @@ class LibgenUploader:
     def _upload_file(self, file: Union[str, bytes], library: str) -> BeautifulSoup:
         if library == "scitech":
             self._init_browser()
-            self._browser.open(SCITECH_UPLOAD_URL)
+            upload_url = SCITECH_UPLOAD_URL
         elif library == "fiction":
             self._init_browser()
-            self._browser.open(FICTION_UPLOAD_URL)
+            upload_url = FICTION_UPLOAD_URL
         else:
             raise ValueError(f"Unknown library to upload to: {library}")
+
+        self._browser.open(upload_url)
 
         if isinstance(file, str):
             encoder = MultipartEncoder(
@@ -169,7 +170,7 @@ class LibgenUploader:
             )
             session = self._browser.session
             response = session.post(
-                "https://library.bz/fiction/upload/",
+                upload_url,
                 data=monitor,
                 headers={"Content-Type": monitor.content_type},
             )
