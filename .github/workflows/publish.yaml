@@ -16,15 +16,13 @@ jobs:
 
     - name: Install poetry
       run: |
-        curl -sSL \
-          "https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py" | python
+        curl -sSL "https://install.python-poetry.org" | python
         # Adding `poetry` to `$PATH`:
         echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
     - name: Install dependencies
       run: |
         poetry config virtualenvs.in-project true
-        poetry config experimental.new-installer false
         poetry install
 
     - name: Config PyPI token
