@@ -47,7 +47,6 @@ def check_upload_form_response(response: BeautifulSoup) -> bool:
 def check_metadata_form_response(
     response: BeautifulSoup,
 ) -> str:
-
     if error_el := response.select_one(".error") or response.select_one(".form_error"):
         error_text = error_el.text.strip()
         raise LibgenUploadException(f"File save failed: {error_text}")
