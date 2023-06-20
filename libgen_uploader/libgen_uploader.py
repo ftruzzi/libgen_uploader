@@ -12,7 +12,7 @@ import filetype
 # https://github.com/jmcarp/robobrowser/issues/93
 import werkzeug
 
-werkzeug.cached_property = werkzeug.utils.cached_property
+werkzeug.cached_property = werkzeug.utils.cached_property  # type: ignore
 
 from bs4 import BeautifulSoup
 from cerberus import schema
