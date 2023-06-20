@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "libgen_uploader"
-version = "0.2.0"
+version = "0.2.1"
 description = "A Library Genesis ebook uploader"
 authors = ["Francesco Truzzi <francesco@truzzi.me>"]
 license = "MIT"
@@ -17,7 +17,7 @@ requests-toolbelt = "^1.0.0"
 filetype = "^1.0.7"
 
 [tool.poetry.dev-dependencies]
-black = "^20.8b1"
+black = "^23.3.0"
 pytest = "^6.2.2"
 pytest-recording = "^0.11.0"
 mypy = "^0.812"
